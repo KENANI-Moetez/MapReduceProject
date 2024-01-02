@@ -13,11 +13,17 @@ public class RaceDetailsMapper extends Mapper<LongWritable, Text, Text, IntWrita
 
     @Override
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-        String[] columns = value.toString().split(",");
-        // Assuming the race name is in the second column and total laps in the fifth column
-        raceName.set(columns[1]);
-        totalLaps.set(Integer.parseInt(columns[4]));
+        try {
+            String[] columns = value.toString().split(",");
 
-        context.write(raceName, totalLaps);
+            // Assuming the race name is in the second column and total laps in the fifth column
+            raceName.set(columns[1]);
+            totalLaps.set(Integer.parseInt(columns[4]));
+
+            context.write(raceName, totalLaps);
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+            // Log or handle the exception as needed
+            System.err.println("Error in RaceDetailsMapper: " + e.getMessage());
+        }
     }
 }

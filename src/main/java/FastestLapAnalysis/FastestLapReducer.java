@@ -12,15 +12,20 @@ public class FastestLapReducer extends Reducer<Text, IntWritable, Text, IntWrita
     @Override
     protected void reduce(Text key, Iterable<IntWritable> values, Context context)
             throws IOException, InterruptedException {
-        int sum = 0;
+        try {
+            int sum = 0;
 
-        // Calculate the total number of fastest laps for each driver
-        for (IntWritable value : values) {
-            sum += value.get();
+            // Calculate the total number of fastest laps for each driver
+            for (IntWritable value : values) {
+                sum += value.get();
+            }
+
+            totalFastestLaps.set(sum);
+
+            context.write(key, totalFastestLaps);
+        } catch (Exception e) {
+            // Log or handle the exception as needed
+            System.err.println("Error in FastestLapReducer: " + e.getMessage());
         }
-
-        totalFastestLaps.set(sum);
-
-        context.write(key, totalFastestLaps);
     }
 }

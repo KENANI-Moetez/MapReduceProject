@@ -13,10 +13,16 @@ public class FastestLapMapper extends Mapper<LongWritable, Text, Text, IntWritab
 
     @Override
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-        String[] columns = value.toString().split(",");
-        // Assuming the driver's name is in the first column
-        driverName.set(columns[0]);
+        try {
+            String[] columns = value.toString().split(",");
 
-        context.write(driverName, fastestLapCount);
+            // Assuming the driver's name is in the first column
+            driverName.set(columns[0]);
+
+            context.write(driverName, fastestLapCount);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // Log or handle the exception as needed
+            System.err.println("Error accessing array index in FastestLapMapper: " + e.getMessage());
+        }
     }
 }
